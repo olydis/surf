@@ -180,7 +180,7 @@ async function realMain(argv, showHelp) {
   await resetOriginUrl(workDir, repo);
 
   d(`Determining command to build`);
-  let { cmd, cmds, args, artifactDirs } = await determineBuildCommands(workDir);
+  let { cmd, cmds, args, artifactDirs } = await determineBuildCommands(workDir, argv.discoverer);
 
   if (!cmds) {
     cmds = [{cmd, args}];

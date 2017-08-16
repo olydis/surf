@@ -9,8 +9,12 @@ import { addFilesToGist, getGistTempdir, pushGistRepoToMaster } from './git-api'
 
 const d = require('debug')('surf:build-api');
 
-export function createBuildDiscovers(rootPath) {
+export function createBuildDiscovers(rootPath, discoverer) {
   let discoverClasses = fs.readdirSync(path.join(__dirname, 'build-discoverers'));
+
+  if (discoverer) {
+    discoverClasses = [discoverer + ".js"];
+  }
 
   return _.map(discoverClasses, (file) => {
     const Klass = require(path.join(__dirname, 'build-discoverers', file)).default;
@@ -20,8 +24,8 @@ export function createBuildDiscovers(rootPath) {
   });
 }
 
-export async function determineBuildCommands(rootPath, sha) {
-  let discoverers = createBuildDiscovers(rootPath);
+export async function determineBuildCommands(rootPath, discoverer, sha) {
+  let discoverers = createBuildDiscovers(rootPath, discoverer);
   let activeDiscoverers = [];
 
   let mainDiscoverer = await asyncReduce(discoverers, async (acc, x) => {
